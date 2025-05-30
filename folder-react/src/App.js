@@ -33,7 +33,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(false);
   const [showTimelinePopup, setShowTimelinePopup] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showDocumentPopup, setShowDocumentPopup] = useState(false);
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
 
   const chartData = [
     { name: 'Sidang Komisi 1', value: 25 },
@@ -105,13 +105,13 @@ function App() {
             </div>
             <div style={styles.userProfile}>
               <img
-                src="https://cdn.ipb.ac.id/photo/G61_2022_G6401221083_FADHIL MUMTAZ_35b2d35b78154b819057438730a43ab1.jpg"
+                src="https://cs.ipb.ac.id/wp-content/uploads/2021/10/ANN-225x300.jpg"
                 alt="User"
                 style={styles.profilePic}
               />
               <div style={styles.userInfo}>
-                <div style={styles.userName}>FADHIL MUMTAZ</div>
-                <div style={styles.userId}>G6401221083</div>
+                <div style={styles.userName}>Dr.Eng. Annisa, S.Kom., M.Kom.</div>
+                <div style={styles.userId}>196011261986012001</div>
               </div>
             </div>
           </div>
@@ -233,25 +233,90 @@ function App() {
         </div>
       )}
 
+      {/* Popup Reject  */}
+      {showRejectPopup && (
+        <div style={styles.rejectPopupContainer}>
+          <div style={styles.rejectPopupContent}>
+            <h3 style={styles.rejectPopupTitle}>Tolak Bimbingan</h3>
+            <button 
+              onClick={() => setShowRejectPopup(false)}
+              style={styles.closeButton}
+            >
+              <FaTimes />
+            </button>
+            
+            <div style={styles.rejectFormContainer}>
+              <div style={styles.rejectFormGroup}>
+                <label style={styles.rejectLabel}>Alasan Penolakan:</label>
+                <textarea 
+                  style={styles.rejectTextarea}
+                  placeholder="Masukkan alasan penolakan..."
+                  rows="4"
+                />
+              </div>
+            </div>
+            
+            <div style={styles.rejectButtonsContainer}>
+              <button 
+                style={{...styles.rejectButton, ...styles.rejectSubmitButton}}
+                onClick={() => setShowRejectPopup(false)}
+              >
+                Tolak
+              </button>
+              <button 
+                style={{...styles.rejectButton, ...styles.rejectCancelButton}}
+                onClick={() => setShowRejectPopup(false)}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Left Sidebar */}
       <div style={styles.leftRectangle}>
         <div style={styles.sidebarIcons}>
-          <FaHome style={styles.sidebarIcon} />
-          
-          <div style={styles.iconGroup}>
-            <FaBook style={styles.sidebarIcon} />
-            <FaClipboardList style={styles.sidebarIcon} />
+          <div style={styles.sidebarIconContainer}>
+            <FaHome style={styles.sidebarIcon} />
           </div>
           
-          <FaStar style={styles.sidebarIcon} />
-          <FaComment style={styles.sidebarIcon} />
-          <FaUser style={styles.sidebarIcon} />
-          <FaVideo style={styles.sidebarIcon} />
-          <FaGraduationCap style={{...styles.sidebarIcon, ...styles.activeIcon}} />
-          <FaUpload style={styles.sidebarIcon} />
-          <FaBriefcaseMedical style={styles.sidebarIcon} />
-          <FaCar style={styles.sidebarIcon} />
-          <FaQuestionCircle style={styles.sidebarIcon} />
+          <div style={styles.iconGroup}>
+            <div style={styles.sidebarIconContainer}>
+              <FaBook style={styles.sidebarIcon} />
+            </div>
+            <div style={styles.sidebarIconContainer}>
+              <FaClipboardList style={styles.sidebarIcon} />
+            </div>
+          </div>
+          
+          <div style={styles.sidebarIconContainer}>
+            <FaStar style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaComment style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaUser style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaVideo style={styles.sidebarIcon} />
+          </div>
+          <div style={{...styles.sidebarIconContainer, ...styles.activeIconContainer}}>
+            <FaGraduationCap style={{ ...styles.sidebarIcon, ...styles.activeSidebarIcon }} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaUpload style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaBriefcaseMedical style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaCar style={styles.sidebarIcon} />
+          </div>
+          <div style={styles.sidebarIconContainer}>
+            <FaQuestionCircle style={styles.sidebarIcon} />
+          </div>
         </div>
       </div>
 
@@ -374,6 +439,7 @@ function App() {
         </div>
 
         <div style={styles.tabelContainer}>
+          <h3 style={styles.tabelTitle}>Pengajuan Bimbingan</h3>
           <table style={styles.tabelMahasiswa}>
             <thead>
               <tr style={{ ...styles.tableHeader, backgroundColor: '#FFFFFF' }}>
@@ -450,6 +516,7 @@ function App() {
                       }}
                       aria-label="Reject"
                       type="button"
+                      onClick={() => setShowRejectPopup(true)}
                     >
                       <FaTimes />
                     </button>
@@ -519,6 +586,7 @@ function App() {
                       }}
                       aria-label="Reject"
                       type="button"
+                      onClick={() => setShowRejectPopup(true)}
                     >
                       <FaTimes />
                     </button>
@@ -588,6 +656,7 @@ function App() {
                       }}
                       aria-label="Reject"
                       type="button"
+                      onClick={() => setShowRejectPopup(true)}
                     >
                       <FaTimes />
                     </button>
@@ -657,6 +726,7 @@ function App() {
                       }}
                       aria-label="Reject"
                       type="button"
+                      onClick={() => setShowRejectPopup(true)}
                     >
                       <FaTimes />
                     </button>
@@ -725,8 +795,250 @@ function App() {
                       }}
                       aria-label="Reject"
                       type="button"
+                      onClick={() => setShowRejectPopup(true)}
                     >
                       <FaTimes />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {/* Tabel Persetujuan Bukti Milestone */}
+        <div style={styles.tabelContainer}>
+          <h3 style={{...styles.tabelTitle, marginBottom: '20px'}}>Persetujuan Bukti Milestone</h3>
+          <table style={styles.tabelMahasiswa}>
+            <thead>
+              <tr style={{ ...styles.tableHeader, backgroundColor: '#FFFFFF' }}>
+                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '50px'}}>No</th>
+                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '150px'}}>Nama Mahasiswa</th>
+                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '180px'}}>Tahap Milestone</th>
+                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '120px'}}>Bukti</th>
+                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '200px'}}>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Baris 1 */}
+              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
+                <td style={styles.centerCell}>1</td>
+                <td style={styles.centerCell}>Muhammad Agal Lulanika</td>
+                <td style={styles.centerCell}>Sidang Komisi 1</td>
+                <td style={styles.centerCell}>
+                  <button 
+                    style={styles.downloadLinkButton}
+                    onClick={() => console.log('Download clicked')}
+                  >
+                    Download Bukti
+                  </button>
+                </td>
+                <td style={styles.centerCell}>
+                  <div style={styles.actionButtonsContainer}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.greenBtn,
+                        borderTopLeftRadius: '6px',
+                        borderBottomLeftRadius: '6px'
+                      }}
+                      onClick={() => setShowConfirmation(true)}
+                      type="button"
+                      aria-label="Accept"
+                    >
+                      <FaArrowRight style={{ color: 'white' }} />
+                    </button>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.redBtn,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px'
+                      }}
+                      onClick={() => setShowRejectPopup(true)}
+                      type="button"
+                      aria-label="Decline"
+                    >
+                      <FaTimes style={{ color: 'white' }} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+              {/* Baris 2 */}
+              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
+                <td style={styles.centerCell}>2</td>
+                <td style={styles.centerCell}>Shafaya Sasikirana</td>
+                <td style={styles.centerCell}>Evaluasi dan Monitoring</td>
+                <td style={styles.centerCell}>
+                  <button 
+                    style={styles.downloadLinkButton}
+                    onClick={() => console.log('Download clicked')}
+                  >
+                    Download Bukti
+                  </button>
+                </td>
+                <td style={styles.centerCell}>
+                  <div style={styles.actionButtonsContainer}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.greenBtn,
+                        borderTopLeftRadius: '6px',
+                        borderBottomLeftRadius: '6px'
+                      }}
+                      onClick={() => setShowConfirmation(true)}
+                      type="button"
+                      aria-label="Accept"
+                    >
+                      <FaArrowRight style={{ color: 'white' }} />
+                    </button>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.redBtn,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px'
+                      }}
+                      onClick={() => setShowRejectPopup(true)}
+                      type="button"
+                      aria-label="Decline"
+                    >
+                      <FaTimes style={{ color: 'white' }} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+              {/* Baris 3 */}
+              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
+                <td style={styles.centerCell}>3</td>
+                <td style={styles.centerCell}>Rio Alvein Hasana</td>
+                <td style={styles.centerCell}>Sidang Komisi 2</td>
+                <td style={styles.centerCell}>
+                  <button 
+                    style={styles.downloadLinkButton}
+                    onClick={() => console.log('Download clicked')}
+                  >
+                    Download Bukti
+                  </button>
+                </td>
+                <td style={styles.centerCell}>
+                  <div style={styles.actionButtonsContainer}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.greenBtn,
+                        borderTopLeftRadius: '6px',
+                        borderBottomLeftRadius: '6px'
+                      }}
+                      onClick={() => setShowConfirmation(true)}
+                      type="button"
+                      aria-label="Accept"
+                    >
+                      <FaArrowRight style={{ color: 'white' }} />
+                    </button>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.redBtn,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px'
+                      }}
+                      onClick={() => setShowRejectPopup(true)}
+                      type="button"
+                      aria-label="Decline"
+                    >
+                      <FaTimes style={{ color: 'white' }} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+              {/* Baris 4 */}
+              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
+                <td style={styles.centerCell}>4</td>
+                <td style={styles.centerCell}>Fadhil Mumtaz</td>
+                <td style={styles.centerCell}>Seminar</td>
+                <td style={styles.centerCell}>
+                  <button 
+                    style={styles.downloadLinkButton}
+                    onClick={() => console.log('Download clicked')}
+                  >
+                    Download Bukti
+                  </button>
+                </td>
+                <td style={styles.centerCell}>
+                  <div style={styles.actionButtonsContainer}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.greenBtn,
+                        borderTopLeftRadius: '6px',
+                        borderBottomLeftRadius: '6px'
+                      }}
+                      onClick={() => setShowConfirmation(true)}
+                      type="button"
+                      aria-label="Accept"
+                    >
+                      <FaArrowRight style={{ color: 'white' }} />
+                    </button>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.redBtn,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px'
+                      }}
+                      onClick={() => setShowRejectPopup(true)}
+                      type="button"
+                      aria-label="Decline"
+                    >
+                      <FaTimes style={{ color: 'white' }} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+              {/* Baris 5 */}
+              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
+                <td style={styles.centerCell}>5</td>
+                <td style={styles.centerCell}>T. Mochamad Rafly</td>
+                <td style={styles.centerCell}>Proposal</td>
+                <td style={styles.centerCell}>
+                  <button 
+                    style={styles.downloadLinkButton}
+                    onClick={() => console.log('Download clicked')}
+                  >
+                    Download Bukti
+                  </button>
+                </td>
+                <td style={styles.centerCell}>
+                  <div style={styles.actionButtonsContainer}>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.greenBtn,
+                        borderTopLeftRadius: '6px',
+                        borderBottomLeftRadius: '6px'
+                      }}
+                      onClick={() => setShowConfirmation(true)}
+                      type="button"
+                      aria-label="Accept"
+                    >
+                      <FaArrowRight style={{ color: 'white' }} />
+                    </button>
+                    <button
+                      style={{
+                        ...styles.btn,
+                        ...styles.redBtn,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px'
+                      }}
+                      onClick={() => setShowRejectPopup(true)}
+                      type="button"
+                      aria-label="Decline"
+                    >
+                      <FaTimes style={{ color: 'white' }} />
                     </button>
                   </div>
                 </td>
@@ -818,14 +1130,14 @@ const styles = {
     position: 'fixed',
     top: '53px',
     left: 0,
-    width: '74.5px',
+    width: '64px',
     height: 'calc(100vh - 53px)',
     backgroundColor: 'white',
     boxShadow: '2px 0 10px rgba(0, 0, 0, 0.05)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '12px 0',
+    padding: '10px 0',
     zIndex: 1000,
   },
   sidebarIcons: {
@@ -833,37 +1145,36 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '4px',
-    minWidth: '3rem',
-    padding: '4px 0',
+    width: '100%',
   },
-  sidebarIcon: {
-    fontSize: '16px',
-    color: '#333',
-    cursor: 'pointer',
-    width: '24px',
-    height: '34px',
+  sidebarIconContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40px',
+    height: '40px',
     borderRadius: '8px',
-    transition: 'background-color 0.3s',
-    margin: '1px 0',
+    transition: 'background-color 0.2s',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#f0f0f0',
+    },
   },
-  activeIcon: {
+  activeIconContainer: {
     background: 'linear-gradient(to right, #3a00ff, #3183ff)',
-    borderTopRightRadius: '10px',
-    borderBottomRightRadius: '10px',
-    color: 'white',
-    width: '24px',
+  },
+  sidebarIcon: {
+    fontSize: '18px',
+    color: '#334a40', // Warna ikon tidak aktif
   },
   iconGroup: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '4px',
-    marginTop: '8px',
+    width: '100%',
   },
-  contentWrapper: {
+    contentWrapper: {
     marginLeft: '92.7px',
     padding: '92.7px 20px 20px 20px',
   },
@@ -1023,6 +1334,10 @@ const styles = {
     verticalAlign: 'middle',
     fontWeight: 'bold',
   },
+  tableBodyCell: {
+    fontWeight: 'normal', // Pastikan isi tabel regular
+    // ... properti lainnya tetap
+  },
   tableRow: {
     borderBottom: '1px solid #ddd',
   },
@@ -1030,6 +1345,7 @@ const styles = {
     padding: '12px',
     verticalAlign: 'middle',
     border: 'none',
+    fontWeight: 400,
   },
   status: {
     display: 'inline-flex',
@@ -1315,6 +1631,156 @@ const styles = {
     fontWeight: '500',
     transition: 'background-color 0.2s',
   },
+
+  rejectPopupContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 2000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rejectPopupContent: {
+    backgroundColor: 'white',
+    padding: '25px',
+    borderRadius: '12px',
+    position: 'relative',
+    minWidth: '450px',
+    maxWidth: '500px',
+    width: '90%',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+  },
+  rejectPopupTitle: {
+    margin: '0 0 20px 0',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  rejectFormContainer: {
+    marginBottom: '25px',
+  },
+  rejectFormGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  rejectLabel: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#555',
+  },
+  rejectTextarea: {
+    width: '100%',
+    minHeight: '100px',
+    padding: '12px',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontFamily: "'Poppins', sans-serif",
+    resize: 'vertical',
+    outline: 'none',
+    boxSizing: 'border-box',
+  },
+  rejectButtonsContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '10px',
+  },
+  rejectButton: {
+    padding: '10px 20px',
+    borderRadius: '6px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    transition: 'all 0.2s',
+    minWidth: '80px',
+  },
+  rejectSubmitButton: {
+    backgroundColor: '#dc3545',
+    color: 'white',
+  },
+  rejectCancelButton: {
+    backgroundColor: '#6c757d',
+    color: 'white',
+  },
+  // Judul tabel
+  tabelTitle: {
+    fontSize: '20px',
+    fontWeight: 'bold', 
+    color: '#343A40',
+    margin: '0 0 20px 0',
+  },
+
+  // Link download
+  downloadLinkButton: {
+    color: '#007bff',
+    background: 'none',
+    border: 'none',
+    padding: '6px 12px',
+    font: 'inherit',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    display: 'inline-block',
+    fontSize: '14px',
+    borderRadius: '4px',
+    transition: 'background-color 0.2s',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 123, 255, 0.1)',
+    },
+  },
+
+  // Perbaiki style milestoneActionContainer
+  milestoneActionContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '8px',
+  },
+
+  // Perbaiki style btn agar konsisten
+  milestonebtn: {
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: 'white',
+    width: '32px',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0',
+    transition: 'opacity 0.2s',
+  },
+
+  // Tombol Accept (hijau)
+  acceptBtn: {
+    backgroundColor: '#28a745',
+    color: 'white',
+  },
+
+  // Tombol Decline (merah)  
+  declineBtn: {
+    backgroundColor: '#dc3545',
+    color: 'white',
+  },
+
+  centerCell: {
+    padding: '12px',
+    verticalAlign: 'middle',
+    border: 'none',
+    textAlign: 'center',
+    fontWeight: 400,
+  },
+
+  activeSidebarIcon: {
+    color: 'white',
+  },
+
 };
 
 export default App;

@@ -148,7 +148,7 @@ body, html {
 }
 
 .user-id {
-  font-weight: lighter;
+  font-weight: regular;
   color: #7F7F7F;
   font-size: 14px;
 }
@@ -306,6 +306,14 @@ body, html {
   width: 150px;
 }
 
+.tabel-mahasiswa td {
+  font-weight: 400; /* Normal / regular */
+}
+
+.tabel-mahasiswa th {
+  font-weight: 700; /* Bold */
+}
+
 /* Action buttons - Horizontal layout */
 .aksi {
   display: flex;
@@ -363,11 +371,13 @@ body, html {
   gap: 6px;
   padding: 8px 12px;
   border-radius: 20px;
-  font-weight: bold;
+  font-weight: 700;
   min-height: 20px;
   box-sizing: border-box;
 }
-
+.tabel-mahasiswa td .status {
+  font-weight: 700 !important;
+}
 .status svg {
   font-size: 14px;
 }
@@ -416,5 +426,25 @@ body, html {
   .tabel-mahasiswa {
     width: auto;
     min-width: 100%;
+  }
+
+  .tabel-mahasiswa td {
+    font-weight: 400 !important;
+  }
+
+  .tabel-mahasiswa th {
+    font-weight: 700 !important;
+  }
+
+  .tabel-mahasiswa tbody td {
+    font-weight: 400 !important;
+  }
+
+  .tabel-mahasiswa thead th {
+    font-weight: 700 !important;
+  }
+
+  .status {
+    font-weight: 700 ;
   }
 }
