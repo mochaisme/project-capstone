@@ -33,6 +33,7 @@ function App() {
   const [showTimelinePopup, setShowTimelinePopup] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
 
   const [showTambahBimbingan, setShowTambahBimbingan] = useState(false);
 
@@ -353,6 +354,61 @@ function App() {
         </div>
       )}      
 
+      {showUploadPopup && (
+        <div style={styles.uploadPopupContainer}>
+          <div style={styles.uploadPopupContent}>
+            <h3 style={styles.uploadPopupTitle}>Upload Bukti Milestone</h3>
+            <button 
+              onClick={() => setShowUploadPopup(false)}
+              style={styles.closeButton}
+            >
+              <FaTimes />
+            </button>
+            
+            <div style={styles.uploadFormGroup}>
+              <label style={styles.uploadLabel}>Pilih Milestone</label>
+              <select style={styles.uploadSelect}>
+                <option value="">Pilih Milestone</option>
+                {timelineSteps.map(step => (
+                  <option key={step.id} value={step.label}>{step.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={styles.uploadFormGroup}>
+              <label style={styles.uploadLabel}>Upload Bukti</label>
+              <div style={styles.uploadFileContainer}>
+                <input type="file" style={styles.uploadFileInput} />
+              </div>
+            </div>
+            
+            <div style={styles.uploadFormGroup}>
+              <label style={styles.uploadLabel}>Keterangan</label>
+              <textarea 
+                style={styles.uploadTextarea} 
+                placeholder="Masukkan keterangan (opsional)"
+                rows="4"
+              ></textarea>
+            </div>
+            
+            <div style={styles.uploadButtonGroup}>
+              <button 
+                style={{...styles.uploadButton, ...styles.uploadSubmitButton}}
+                onClick={() => setShowUploadPopup(false)}
+              >
+                Upload Bukti
+              </button>
+              <button 
+                style={{...styles.uploadButton, ...styles.uploadCancelButton}}
+                onClick={() => setShowUploadPopup(false)}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Popup Detail */}
       {showPopup && (
         <div style={styles.popupContainer}>
@@ -509,6 +565,170 @@ function App() {
         </div>
       )}
 
+      {showTambahBimbingan && (
+        <div style={styles.popupContainer}>
+          <div style={styles.tambahBimbinganContent}>
+            <h3 style={styles.popupTitle}>Tambah Bimbingan</h3>
+            <button 
+              onClick={() => setShowTambahBimbingan(false)}
+              style={styles.closeButton}
+            >
+              <FaTimes />
+            </button>
+            
+            {/* Form Tambah Bimbingan */}
+            <div style={styles.tambahBimbinganForm}>
+              {/* Gambaran Kegiatan */}
+              <div style={styles.tambahBimbinganSection}>
+                <h4 style={styles.tambahBimbinganSectionTitle}>Gambaran Kegiatan</h4>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Tahun Semester</label>
+                  <select style={styles.tambahBimbinganSelect}>
+                    <option>Pilih --</option>
+                    <option>2024/2025 Semester Genap</option>
+                    <option>2024/2025 Semester Ganjil</option>
+                  </select>
+                </div>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Nama Kegiatan*</label>
+                  <input 
+                    type="text" 
+                    placeholder="Judul/nama kegiatan yang dilkuti"
+                    style={styles.tambahBimbinganInput}
+                  />
+                </div>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Deskripsi Kegiatan*</label>
+                  <textarea 
+                    placeholder="Mencakup gambaran kegiatan, capatan pembelajaran, tujuan/manfaat yang diperoleh, kompetensi yang dikuasai setelah mengikuti kegiatan"
+                    style={{...styles.tambahBimbinganInput, height: '100px'}}
+                    rows={4}
+                  />
+                </div>
+              </div>
+              
+              {/* Pembatas */}
+              <hr style={styles.tambahBimbinganDivider} />
+              
+              {/* Waktu dan Tempat */}
+              <div style={styles.tambahBimbinganSection}>
+                <h4 style={styles.tambahBimbinganSectionTitle}>Waktu dan Tempat</h4>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Waktu Kegiatan*</label>
+                  <input 
+                    type="date" 
+                    style={styles.tambahBimbinganInput}
+                  />
+                </div>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Durasi Jam Kegiatan*</label>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <input 
+                      type="number" 
+                      min="0"
+                      defaultValue="0"
+                      style={{...styles.tambahBimbinganInput, width: '80px', textAlign: 'center'}}
+                    />
+                    <span style={{marginLeft: '10px'}}>Jam</span>
+                  </div>
+                </div>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Tipe Penyelenggaraan*</label>
+                  <select style={styles.tambahBimbinganSelect}>
+                    <option>Hybrid</option>
+                    <option>Offline</option>
+                    <option>Online</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Pembatas */}
+              <hr style={styles.tambahBimbinganDivider} />
+              
+              {/* Pembimbing Kegiatan */}
+              <div style={styles.tambahBimbinganSection}>
+                <h4 style={styles.tambahBimbinganSectionTitle}>Pembimbing Kegiatan</h4>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>Pembimbing IPB*</label>
+                  <select style={styles.tambahBimbinganSelect}>
+                    <option>Pilih Dosen --</option>
+                    <option>Dr. Eng. Annisa, S.Kom, M.Kom</option>
+                    <option>Prof. Budi Rahardjo, S.Kom, M.Sc.</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Pembatas */}
+              <hr style={styles.tambahBimbinganDivider} />
+              
+              {/* Dokumen Pendukung */}
+              <div style={styles.tambahBimbinganSection}>
+                <h4 style={styles.tambahBimbinganSectionTitle}>Dokumen Pendukung</h4>
+                
+                <table style={{width: '100%', borderCollapse: 'collapse', marginBottom: '15px'}}>
+                  <thead>
+                    <tr>
+                      <th style={{...styles.tambahBimbinganTableHeader, textAlign: 'left'}}>Name*</th>
+                      <th style={styles.tambahBimbinganTableHeader}>File*</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style={{padding: '8px 0', borderBottom: '1px solid #eee'}}>
+                        Sertifikat Kegiatan, LOA, Laporan Kegiatan, Photo/Dokumentasi Kegiatan, dll
+                      </td>
+                      <td style={{padding: '8px 0', borderBottom: '1px solid #eee', textAlign: 'center'}}>
+                        <button style={styles.tambahBimbinganFileButton}>
+                          Choose File
+                        </button>
+                        <span style={{fontSize: '12px', marginLeft: '5px'}}>No file chosen</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                
+                <div style={styles.tambahBimbinganFormGroup}>
+                  <label style={styles.tambahBimbinganLabel}>
+                    Url yang merujuk kepada informasi kegiatan (website, media social, drive, dll)
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Masukkan URL"
+                    style={styles.tambahBimbinganInput}
+                  />
+                </div>
+                
+                <p style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
+                  Maksimum upload: 10MB. Jika lebih, upload ke tempat lain dan masukkan alamatiya pada bagian Link.
+                </p>
+              </div>
+              
+              {/* Tombol Submit */}
+              <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
+                <button 
+                  style={{...styles.tambahBimbinganButton, backgroundColor: '#6c757d'}}
+                  onClick={() => setShowTambahBimbingan(false)}
+                >
+                  Batal
+                </button>
+                <button 
+                  style={{...styles.tambahBimbinganButton, backgroundColor: '#3b82f6'}}
+                >
+                  Simpan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Left Sidebar */}
       <div style={styles.leftRectangle}>
         <div style={styles.sidebarIcons}>
@@ -571,12 +791,21 @@ function App() {
                 {statusConfig[currentStatus].label}
               </span>
             </h3>
-            <button
-              type="button"
-              style={styles.timelineVerificationEditButton}
-            >
-              <FaEdit style={{ marginRight: '4px' }} /> Edit Timeline
-            </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  style={{ ...styles.timelineVerificationEditButton, backgroundColor: '#F8F9FA' }}
+                  onClick={() => setShowUploadPopup(true)}
+                >
+                  <FaUpload style={{ marginRight: '4px' }} />
+                  Upload Bukti Milestone
+                </button>
+                <button
+                  style={styles.timelineVerificationEditButton}
+                  onClick={() => setShowEditTimelinePopup(true)}
+                >
+                  <FaEdit style={{ marginRight: '4px' }} /> Edit Timeline
+              </button>
+            </div>
           </div>
           <div style={styles.timelineVerificationBody}>
             <div style={styles.timelineContainer}>
@@ -797,7 +1026,7 @@ function App() {
             <span style={styles.entriesLabel}>entri</span>
           </div>
           <div style={styles.addButtonContainer}>
-              <button 
+          <button 
             style={styles.addButton}
             onClick={() => setShowTambahBimbingan(true)}
           >
@@ -2107,6 +2336,173 @@ calendarDay: {
 },
 calendarSelectedDay: {
   backgroundColor: '#3b82f6',
+  color: 'white',
+},
+
+tambahBimbinganContent: {
+  backgroundColor: 'white',
+  borderRadius: '12px',
+  padding: '30px',
+  width: '700px',
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  position: 'relative',
+},
+tambahBimbinganForm: {
+  padding: '10px 0',
+},
+tambahBimbinganSection: {
+  marginBottom: '20px',
+},
+tambahBimbinganSectionTitle: {
+  fontSize: '16px',
+  fontWeight: '600',
+  color: '#333',
+  margin: '0 0 15px 0',
+},
+tambahBimbinganFormGroup: {
+  marginBottom: '15px',
+},
+tambahBimbinganLabel: {
+  display: 'block',
+  marginBottom: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: '#555',
+},
+tambahBimbinganInput: {
+  width: '100%',
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+  boxSizing: 'border-box',
+},
+tambahBimbinganSelect: {
+  width: '100%',
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+  backgroundColor: 'white',
+},
+tambahBimbinganDivider: {
+  border: 'none',
+  borderTop: '1px dashed #ddd',
+  margin: '25px 0',
+},
+tambahBimbinganTableHeader: {
+  padding: '8px 0',
+  borderBottom: '1px solid #ddd',
+  fontWeight: '600',
+  fontSize: '14px',
+  color: '#333',
+},
+tambahBimbinganFileButton: {
+  padding: '8px 15px',
+  backgroundColor: '#f0f0f0',
+  border: '1px solid #ddd',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontSize: '14px',
+},
+tambahBimbinganButton: {
+  padding: '10px 20px',
+  borderRadius: '6px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: 'white',
+  marginLeft: '10px',
+  transition: 'background-color 0.2s',
+},
+
+uploadPopupContainer: {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 2000,
+},
+uploadPopupContent: {
+  backgroundColor: 'white',
+  borderRadius: '12px',
+  padding: '30px',
+  width: '500px',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  position: 'relative',
+},
+uploadPopupTitle: {
+  marginTop: '0',
+  marginBottom: '20px',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  color: '#333',
+},
+uploadFormGroup: {
+  marginBottom: '20px',
+},
+uploadLabel: {
+  display: 'block',
+  marginBottom: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: '#555',
+},
+uploadSelect: {
+  width: '100%',
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+},
+uploadFileContainer: {
+  display: 'flex',
+  alignItems: 'center',
+},
+uploadFileInput: {
+  flex: 1,
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+},
+uploadTextarea: {
+  width: '100%',
+  minHeight: '100px',
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+  resize: 'vertical',
+},
+uploadButtonGroup: {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  gap: '10px',
+  marginTop: '20px',
+},
+uploadButton: {
+  padding: '10px 20px',
+  borderRadius: '6px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: '500',
+},
+uploadSubmitButton: {
+  backgroundColor: '#4CAF50',
+  color: 'white',
+},
+uploadCancelButton: {
+  backgroundColor: '#f44336',
   color: 'white',
 },
 
