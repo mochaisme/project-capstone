@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import {
-  FaUsers,
-  FaUserGraduate,
-  FaUserCheck,
-  FaUserTimes,
   FaGraduationCap,
   FaHome,
+  FaTrash,
+  FaPlus,
   FaBook,
+  FaEdit,
   FaClipboardList,
-  FaList,
   FaStar,
   FaComment,
   FaUser,
@@ -23,10 +21,11 @@ import {
   FaBell,
   FaBars,
   FaEye,
-  FaArrowRight,
   FaTimes,
   FaCheck,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaCalendarAlt,
+  FaChevronDown
 } from 'react-icons/fa';
 
 function App() {
@@ -34,6 +33,144 @@ function App() {
   const [showTimelinePopup, setShowTimelinePopup] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
+
+  const [showTambahBimbingan, setShowTambahBimbingan] = useState(false);
+
+  const [showEditTimelinePopup, setShowEditTimelinePopup] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState('');
+  const [newDeadline, setNewDeadline] = useState('');
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  // Data tabel baru
+  const [pengajuanData, setPengajuanData] = useState([
+    {
+      id: 1,
+      tahunSemester: '2024/2025 Semester Genap',
+      namaDosen: 'Dr. Eng. Annisa, S.Kom, M.Kom',
+      waktu: '4 Mar 2025',
+      durasi: '2 Jam',
+      jenis: 'Proposal',
+      status: 'Sedang Diperiksa',
+    },
+    {
+      id: 2,
+      tahunSemester: '2024/2025 Semester Genap',
+      namaDosen: 'Dr. Eng. Annisa, S.Kom, M.Kom',
+      waktu: '27 Feb 2025',
+      durasi: '5 Jam',
+      jenis: 'Seminar',
+      status: 'Disetujui',
+    },
+    {
+      id: 3,
+      tahunSemester: '2024/2025 Semester Genap',
+      namaDosen: 'Dr. Eng. Annisa, S.Kom, M.Kom',
+      waktu: '3 Jan 2025',
+      durasi: '3 Jam',
+      jenis: 'Sidang Komisi 2',
+      status: 'Disetujui',
+    },
+    {
+      id: 4,
+      tahunSemester: '2024/2025 Semester Genap',
+      namaDosen: 'Dr. Eng. Annisa, S.Kom, M.Kom',
+      waktu: '21 Des 2024',
+      durasi: '4 Jam',
+      jenis: 'Evaluasi dan Mentoring',
+      status: 'Disetujui',
+    },
+    {
+    id: 5,
+    tahunSemester: '2024/2025 Semester Genap',
+    namaDosen: 'Dr. Eng. Annisa, S.Kom, M.Kom',
+    waktu: '17 Nov 2024',
+    durasi: '2 Jam',
+    jenis: 'Sidang Komisi 1',
+    status: 'Disetujui',
+    }
+  ]);
+
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = pengajuanData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(pengajuanData.length / entriesPerPage);
+
+  const handleHapusPengajuan = (id) => {
+    setPengajuanData(pengajuanData.filter(item => item.id !== id));
+  };
+
+  const [filterLabel, setFilterLabel] = useState('Pilih Tahun');
+  const [currentStatus, setCurrentStatus] = useState('ideal'); 
+  const timelineSteps = [
+    { id: 1, label: 'Penetapan Komisi Pembimbing' },
+    { id: 2, label: 'Sidang Komisi 1' },
+    { id: 3, label: 'Kolokium' },
+    { id: 4, label: 'Proposal' },
+    { id: 5, label: 'Penelitian dan Bimbingan' },
+    { id: 6, label: 'Evaluasi dan Monitoring' },
+    { id: 7, label: 'Sidang Komisi 2' },
+    { id: 8, label: 'Seminar' },
+    { id: 9, label: 'Publikasi Ilmiah' },
+    { id: 10, label: 'Ujian Tesis' }
+  ];
+
+  const [filterValue, setFilterValue] = useState('semua');
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
+
+  const filterOptions = [
+    { value: 'semua', label: 'Tampilkan Semua' },
+    { value: '2025', label: '2025' },
+    { value: '2024', label: '2024' },
+    { value: '2023', label: '2023' },
+    { value: '2022', label: '2022' },
+  ];
+
+  const statusConfig = {
+      ideal: {
+        label: 'On Ideal Schedule',
+        color: '#22c55e',
+      },
+      attention: {
+        label: 'Requires Attention',
+        color: '#eab308',
+      },
+      late: {
+        label: 'Late Behind',
+        color: '#ef4444',
+      }
+    };
+
+    const handleSaveTimeline = () => {
+      // Logika penyimpanan data timeline
+      console.log(`Milestone: ${selectedMilestone}, Deadline: ${newDeadline}`);
+      setShowEditTimelinePopup(false);
+      setSelectedMilestone('');
+      setNewDeadline('');
+    };
+
+    const getStepStyle = (stepId) => {
+    const currentConfig = statusConfig[currentStatus];
+    const isActive = stepId <= currentConfig.activeStep;
+
+    return {
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '14px',
+      fontWeight: '600',
+      backgroundColor: isActive ? currentConfig.stepColor : '#e5e7eb',
+      color: isActive ? 'white' : '#9ca3af',
+      border: isActive ? 'none' : '2px solid #e5e7eb',
+      position: 'relative',
+      zIndex: 2
+    };
+  };
 
   const chartData = [
     { name: 'Sidang Komisi 1', value: 25 },
@@ -117,6 +254,104 @@ function App() {
           </div>
         </div>
       </div>
+
+      {showEditTimelinePopup && (
+        <div style={styles.editTimelinePopupContainer}>
+          <div style={styles.editTimelinePopupContent}>
+            <h3 style={styles.editTimelineTitle}>Edit Timeline</h3>
+            <button 
+              onClick={() => setShowEditTimelinePopup(false)}
+              style={styles.editTimelineCloseButton}
+            >
+              <FaTimes />
+            </button>
+            
+            <div style={styles.editTimelineInputGroup}>
+              <label style={styles.editTimelineLabel}>Pilih Milestone</label>
+              <select 
+                style={styles.editTimelineSelect}
+                value={selectedMilestone}
+                onChange={(e) => setSelectedMilestone(e.target.value)}
+              >
+                <option value="">Pilih Milestone</option>
+                {timelineSteps.map(step => (
+                  <option key={step.id} value={step.label}>{step.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={styles.editTimelineInputGroup}>
+              <label style={styles.editTimelineLabel}>Deadline Baru</label>
+              <div style={styles.editTimelineDateInputContainer}>
+                <input 
+                  type="text"
+                  style={styles.editTimelineInput}
+                  placeholder="dd/mm/yy"
+                  value={newDeadline}
+                  onChange={(e) => setNewDeadline(e.target.value)}
+                />
+                <button 
+                  style={styles.editTimelineCalendarButton}
+                  onClick={() => setShowCalendar(!showCalendar)}
+                >
+                  <FaCalendarAlt />
+                </button>
+                {showCalendar && (
+                  <div style={styles.calendarContainer}>
+                    <div style={styles.calendarHeader}>
+                      <button style={styles.calendarNavButton}>&lt;</button>
+                      <span style={styles.calendarMonth}>May 2025</span>
+                      <button style={styles.calendarNavButton}>&gt;</button>
+                    </div>
+                    <div style={styles.calendarWeekdays}>
+                      <span>Su</span>
+                      <span>Mo</span>
+                      <span>Tu</span>
+                      <span>We</span>
+                      <span>Th</span>
+                      <span>Fr</span>
+                      <span>Sa</span>
+                    </div>
+                    <div style={styles.calendarDays}>
+                      {/* Generate days */}
+                      {[...Array(31)].map((_, i) => (
+                        <div 
+                          key={i}
+                          style={{
+                            ...styles.calendarDay,
+                            ...(i === 26 ? styles.calendarSelectedDay : {})
+                          }}
+                          onClick={() => {
+                            setNewDeadline(`${i+1}/05/25`);
+                            setShowCalendar(false);
+                          }}
+                        >
+                          {i+1}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div style={styles.editTimelineButtonGroup}>
+              <button 
+                style={{...styles.editTimelineButton, ...styles.editTimelineSaveButton}}
+                onClick={handleSaveTimeline}
+              >
+                Simpan
+              </button>
+              <button 
+                style={{...styles.editTimelineButton, ...styles.editTimelineCancelButton}}
+                onClick={() => setShowEditTimelinePopup(false)}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}      
 
       {/* Popup Detail */}
       {showPopup && (
@@ -324,70 +559,175 @@ function App() {
       <div style={styles.contentWrapper}>
         <div style={styles.headerContainer}>
           <h1 style={styles.judul}>
-            Monitoring Tugas Akhir
+            Tugas Akhir
           </h1>
         </div>
 
-        <div style={styles.boxRow}>
-          <div style={{...styles.colorBox, ...styles.blueBox}}>
-            <div style={styles.boxIcon}><FaUsers /></div>
-            <div style={styles.boxContent}>
-              <div style={styles.boxNumber}>147</div>
-              <div style={styles.boxLabel}>Mahasiswa Aktif</div>
-            </div>
+        <div style={styles.timelineVerificationContainer}>
+          <div style={styles.timelineVerificationHeader}>
+            <h3 style={styles.timelineVerificationTitle}>
+              Status Verifikasi
+              <span style={{ ...styles.timelineVerificationBadge, backgroundColor: statusConfig[currentStatus].color }}>
+                {statusConfig[currentStatus].label}
+              </span>
+            </h3>
+            <button
+              type="button"
+              style={styles.timelineVerificationEditButton}
+            >
+              <FaEdit style={{ marginRight: '4px' }} /> Edit Timeline
+            </button>
           </div>
-          <div style={{...styles.colorBox, ...styles.greenBox}}>
-            <div style={styles.boxIcon}><FaUserGraduate /></div>
-            <div style={styles.boxContent}>
-              <div style={styles.boxNumber}>60</div>
-              <div style={styles.boxLabel}>Mahasiswa</div>
-            </div>
-          </div>
-          <div style={{...styles.colorBox, ...styles.yellowBox}}>
-            <div style={{...styles.boxIcon, color: 'rgba(0,0,0,0.7)'}}><FaUserCheck /></div>
-            <div style={styles.boxContent}>
-              <div style={styles.boxNumber}>38</div>
-              <div style={styles.boxLabel}>Mahasiswa</div>
-            </div>
-          </div>
-          <div style={{...styles.colorBox, ...styles.redBox}}>
-            <div style={styles.boxIcon}><FaUserTimes /></div>
-            <div style={styles.boxContent}>
-              <div style={styles.boxNumber}>39</div>
-              <div style={styles.boxLabel}>Mahasiswa</div>
-            </div>
-          </div>
-        </div>
-
-        <div style={styles.middleBox}>
-          <div style={styles.chartHeader}>
-            <h3 style={styles.chartTitle}>Sebaran Mahasiswa</h3>
-            <div style={styles.filterContainer}>
-              <span style={styles.filterText}>Pilih berdasarkan</span>
-              <div style={styles.filterOptions}>
-                <label style={styles.filterOption}>
-                  <input type="radio" name="filter" value="semua" defaultChecked />
-                  <span>Tampilkan Semua</span>
-                </label>
-                <label style={styles.filterOption}>
-                  <input type="radio" name="filter" value="2025" />
-                  <span>2025</span>
-                </label>
-                <label style={styles.filterOption}>
-                  <input type="radio" name="filter" value="2024" />
-                  <span>2024</span>
-                </label>
-                <label style={styles.filterOption}>
-                  <input type="radio" name="filter" value="2023" />
-                  <span>2023</span>
-                </label>
-                <label style={styles.filterOption}>
-                  <input type="radio" name="filter" value="2022" />
-                  <span>2022</span>
-                </label>
+          <div style={styles.timelineVerificationBody}>
+            <div style={styles.timelineContainer}>
+              <div style={styles.timelineStepsWrapper}>
+                {timelineSteps.map((step, index) => {
+                  const isLastStep = index === timelineSteps.length - 1;
+                  
+                  // Tentukan warna circle berdasarkan status dan step
+                  let circleColor = '#D2D3D8'; // Warna default
+                  let circleTextColor = '#9ca3af';
+                  let circleBorder = '2px solid #D2D3D8';
+                  
+                  if (currentStatus === 'ideal') {
+                    if (step.id === 1) {
+                      circleColor = '#3b82f6';
+                      circleTextColor = 'white';
+                      circleBorder = 'none';
+                    }
+                  } else if (currentStatus === 'attention') {
+                    if (step.id === 1) {
+                      circleColor = '#3b82f6';
+                      circleTextColor = 'white';
+                      circleBorder = 'none';
+                    } else if (step.id === 2) {
+                      circleColor = '#eab308';
+                      circleTextColor = 'white';
+                      circleBorder = 'none';
+                    }
+                  } else if (currentStatus === 'late') {
+                    if (step.id === 1) {
+                      circleColor = '#3b82f6';
+                      circleTextColor = 'white';
+                      circleBorder = 'none';
+                    } else if (step.id === 2) {
+                      circleColor = '#ef4444';
+                      circleTextColor = 'white';
+                      circleBorder = 'none';
+                    }
+                  }
+                  
+                  // Tentukan warna garis berdasarkan status
+                  let lineColor = '#D2D3D8'; // Warna default
+                  if (currentStatus === 'attention' && step.id === 1) {
+                    lineColor = '#eab308';
+                  } else if (currentStatus === 'late' && step.id === 1) {
+                    lineColor = '#ef4444';
+                  }
+                  
+                  return (
+                    <React.Fragment key={step.id}>
+                      <div style={styles.timelineStepItem}>
+                        <div style={{
+                          ...styles.timelineStepCircle,
+                          backgroundColor: circleColor,
+                          color: circleTextColor,
+                          border: circleBorder,
+                          zIndex: 3, 
+                        }}>
+                          {step.id}
+                        </div>
+                        <div style={styles.timelineStepLabel}>
+                          {step.label.split(' ').map((word, i) => (
+                            <div key={i}>{word}</div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {!isLastStep && (
+                        <div style={{
+                          ...styles.timelineStepLine,
+                          backgroundColor: lineColor,
+                          zIndex: 1
+                        }}></div>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </div>
             </div>
           </div>
+
+          <div style={styles.timelineControls}>
+            <span style={styles.timelineControlLabel}>Ubah Status:</span>
+            <button
+              style={{
+                ...styles.timelineControlButton,
+                ...(currentStatus === 'ideal' ? styles.timelineControlButtonActive : {})
+              }}
+              onClick={() => setCurrentStatus('ideal')}
+            >
+              On Ideal Schedule
+            </button>
+            <button
+              style={{
+                ...styles.timelineControlButton,
+                ...(currentStatus === 'attention' ? styles.timelineControlButtonActive : {})
+              }}
+              onClick={() => setCurrentStatus('attention')}
+            >
+              Requires Attention
+            </button>
+            <button
+              style={{
+                ...styles.timelineControlButton,
+                ...(currentStatus === 'late' ? styles.timelineControlButtonActive : {})
+              }}
+              onClick={() => setCurrentStatus('late')}
+            >
+              Late Behind
+            </button>
+          </div>
+        </div>
+
+        {/* Middle Box (Chart) */}
+        <div style={styles.middleBox}>
+        <div style={styles.chartHeader}>
+          <h3 style={styles.chartTitle}>Sebaran Mahasiswa</h3>
+          <div style={styles.filterContainer}>
+            <div
+              style={styles.filterDropdownHeader}
+              onClick={() => setShowFilterOptions(prev => !prev)}
+            >
+              <span>{filterLabel}</span>
+              <FaChevronDown style={styles.filterIcon} />
+            </div>
+
+            {showFilterOptions && (
+              <div style={styles.filterDropdownList}>
+                {filterOptions.map(opt => (
+                  <label key={opt.value} style={styles.filterOptionItem}>
+                    <input
+                      type="radio"
+                      name="filter"
+                      value={opt.value}
+                      checked={filterValue === opt.value}
+                      onChange={() => {
+                        setFilterValue(opt.value);
+                        setFilterLabel(opt.label);
+                        setShowFilterOptions(false);
+                      }}
+                      style={styles.filterRadioInput}
+                    />
+                    <span style={styles.filterOptionText}>
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
           <div style={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
@@ -437,614 +777,139 @@ function App() {
             </ResponsiveContainer>
           </div>
         </div>
+        
+        {/* Kontrol Entri dan Tombol Tambah */}
+        <div style={styles.tableTopControls}>
+          <div style={styles.entriesControl}>
+            <span style={styles.entriesLabel}>Tampilkan</span>
+            <input 
+              type="number" 
+              min="1"
+              max={pengajuanData.length}
+              value={entriesPerPage}
+              onChange={(e) => {
+                const value = Math.max(1, Math.min(pengajuanData.length, Number(e.target.value)));
+                setEntriesPerPage(value);
+                setCurrentPage(1);
+              }}
+              style={styles.entriesInput}
+            />
+            <span style={styles.entriesLabel}>entri</span>
+          </div>
+          <div style={styles.addButtonContainer}>
+              <button 
+            style={styles.addButton}
+            onClick={() => setShowTambahBimbingan(true)}
+          >
+              <FaPlus style={styles.addButtonIcon} />
+              <span style={styles.addButtonText}>Tambah Bimbingan</span>
+            </button>
+          </div>
+        </div>
 
+        {/* Tabel Container */}
         <div style={styles.tabelContainer}>
           <h3 style={styles.tabelTitle}>Pengajuan Bimbingan</h3>
           <table style={styles.tabelMahasiswa}>
             <thead>
-              <tr style={{ ...styles.tableHeader, backgroundColor: '#FFFFFF' }}>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '50px'}}>No</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '120px'}}>Tahun Semester</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '150px'}}>Nama Mahasiswa</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '100px'}}>NIM</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell}}>Topik Tugas Akhir</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '180px'}}>Status Progress</th>
-                <th style={{...styles.tableCell, ...styles.tableHeaderCell, width: '150px'}}>Aksi</th>
+              <tr style={styles.tableHeader}>
+                <th style={{...styles.tableHeaderCell, width: '5%', textAlign: 'center'}}>No</th>
+                <th style={{...styles.tableHeaderCell, width: '15%'}}>Tahun Semester</th>
+                <th style={{...styles.tableHeaderCell, width: '20%'}}>Nama Dosen Pembimbing</th>
+                <th style={{...styles.tableHeaderCell, width: '10%'}}>Waktu Kegiatan</th>
+                <th style={{...styles.tableHeaderCell, width: '10%'}}>Durasi Kegiatan</th>
+                <th style={{...styles.tableHeaderCell, width: '15%'}}>Jenis Kegiatan</th>
+                <th style={{...styles.tableHeaderCell, width: '15%'}}>Status Progress</th>
+                <th style={{...styles.tableHeaderCell, width: '10%', textAlign: 'center'}}>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.tableCell}>1</td>
-                <td style={styles.tableCell}>2024/2025<br />Semester Genap</td>
-                <td style={styles.tableCell}>Muhammad Agal Lulanika</td>
-                <td style={styles.tableCell}>G650XXXXXX</td>
-                <td style={styles.tableCell}>Analisis Sentimen pada Ulasan Produk E-Commerce</td>
-                <td style={styles.tableCell}>
-                  <span style={{...styles.status, ...styles.greenStatus}}>
-                    <FaCheck style={styles.statusIcon} /> Sidang Komisi 1
-                  </span>
-                </td>
-                <td style={{ ...styles.tableCell, ...styles.aksi }}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.blueBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px',
-                      }}
-                      aria-label="View"
-                      onClick={() => setShowPopup(true)}
-                      type="button"
-                    >
-                      <FaEye />
-                    </button>
-
-                    {/* Button Cyan (Tengah) */}
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.cyanBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Document"
-                      type="button"
-                      onClick={() => setShowTimelinePopup(true)}
-                    >
-                      <FaList />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Next"
-                      type="button"
-                      onClick={() => setShowConfirmation(true)}
-                    >
-                      <FaArrowRight />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px',
-                      }}
-                      aria-label="Reject"
-                      type="button"
-                      onClick={() => setShowRejectPopup(true)}
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
-                <td style={styles.tableCell}>2</td>
-                <td style={styles.tableCell}>2024/2025<br />Semester Genap</td>
-                <td style={styles.tableCell}>Shafaya Sasikirana</td>
-                <td style={styles.tableCell}>G650XXXXXX</td>
-                <td style={styles.tableCell}>Sistem Pakar Diagnosa Penyakit Menggunakan Fuzzy</td>
-                <td style={styles.tableCell}>
-                  <span style={{...styles.status, ...styles.yellowStatus}}>
-                    <FaExclamationTriangle style={styles.statusIcon} /> Evaluasi dan Monitoring
-                  </span>
-                </td>
-                <td style={{ ...styles.tableCell, ...styles.aksi }}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.blueBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px',
-                      }}
-                      aria-label="View"
-                      onClick={() => setShowPopup(true)}
-                      type="button"
-                    >
-                      <FaEye />
-                    </button>
-
-                    {/* Button Cyan (Tengah) */}
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.cyanBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Document"
-                      type="button"
-                      onClick={() => setShowTimelinePopup(true)}
-                    >
-                      <FaList />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Next"
-                      type="button"
-                      onClick={() => setShowConfirmation(true)}
-                    >
-                      <FaArrowRight />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px',
-                      }}
-                      aria-label="Reject"
-                      type="button"
-                      onClick={() => setShowRejectPopup(true)}
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.tableCell}>3</td>
-                <td style={styles.tableCell}>2024/2025<br />Semester Genap</td>
-                <td style={styles.tableCell}>Rio Alvein Hasana</td>
-                <td style={styles.tableCell}>G650XXXXXX</td>
-                <td style={styles.tableCell}>Aplikasi Peminjaman Buku Digital Berbasis Web</td>
-                <td style={styles.tableCell}>
-                  <span style={{...styles.status, ...styles.greenStatus}}>
-                    <FaCheck style={styles.statusIcon} /> Sidang Komisi 2
-                  </span>
-                </td>
-                <td style={{ ...styles.tableCell, ...styles.aksi }}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.blueBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px',
-                      }}
-                      aria-label="View"
-                      onClick={() => setShowPopup(true)}
-                      type="button"
-                    >
-                      <FaEye />
-                    </button>
-
-                    {/* Button Cyan (Tengah) */}
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.cyanBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Document"
-                      type="button"
-                      onClick={() => setShowTimelinePopup(true)}
-                    >
-                      <FaList />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Next"
-                      type="button"
-                      onClick={() => setShowConfirmation(true)}
-                    >
-                      <FaArrowRight />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px',
-                      }}
-                      aria-label="Reject"
-                      type="button"
-                      onClick={() => setShowRejectPopup(true)}
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
-                <td style={styles.tableCell}>4</td>
-                <td style={styles.tableCell}>2024/2025<br />Semester Genap</td>
-                <td style={styles.tableCell}>Fadhil Mumtaz</td>
-                <td style={styles.tableCell}>G650XXXXXX</td>
-                <td style={styles.tableCell}>Analisis Data Penjualan Menggunakan Power BI</td>
-                <td style={styles.tableCell}>
-                  <span style={{...styles.status, ...styles.redStatus}}>
-                    <FaTimes style={styles.statusIcon} /> Seminar
-                  </span>
-                </td>
-                <td style={{ ...styles.tableCell, ...styles.aksi }}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.blueBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px',
-                      }}
-                      aria-label="View"
-                      onClick={() => setShowPopup(true)}
-                      type="button"
-                    >
-                      <FaEye />
-                    </button>
-
-                    {/* Button Cyan (Tengah) */}
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.cyanBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Document"
-                      type="button"
-                      onClick={() => setShowTimelinePopup(true)}
-                    >
-                      <FaList />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Next"
-                      type="button"
-                      onClick={() => setShowConfirmation(true)}
-                    >
-                      <FaArrowRight />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px',
-                      }}
-                      aria-label="Reject"
-                      type="button"
-                      onClick={() => setShowRejectPopup(true)}
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.tableCell}>5</td>
-                <td style={styles.tableCell}>2024/2025<br />Semester Genap</td>
-                <td style={styles.tableCell}>T. Mochamad Rafly</td>
-                <td style={styles.tableCell}>G650XXXXXX</td>
-                <td style={styles.tableCell}>Penerapan Machine Learning dalam Prediksi Cuaca</td>
-                <td style={styles.tableCell}>
-                  <span style={{...styles.status, ...styles.yellowStatus}}>
-                    <FaExclamationTriangle style={styles.statusIcon} /> Proposal
-                  </span>
-                </td>
-                <td style={{ ...styles.tableCell, ...styles.aksi }}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.blueBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px',
-                      }}
-                      aria-label="View"
-                      onClick={() => setShowPopup(true)}
-                      type="button"
-                    >
-                      <FaEye />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.cyanBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Document"
-                      type="button"
-                      onClick={() => setShowTimelinePopup(true)}
-                    >
-                      <FaList />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderRadius: 0,
-                      }}
-                      aria-label="Next"
-                      type="button"
-                      onClick={() => setShowConfirmation(true)}
-                    >
-                      <FaArrowRight />
-                    </button>
-
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px',
-                      }}
-                      aria-label="Reject"
-                      type="button"
-                      onClick={() => setShowRejectPopup(true)}
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              {currentEntries.map((item, index) => (
+                <tr key={item.id} style={styles.tableRow}>
+                  <td style={{...styles.tableCell, textAlign: 'center'}}>
+                    {index + 1 + (currentPage - 1) * entriesPerPage}
+                  </td>
+                  <td style={styles.tableCell}>{item.tahunSemester}</td>
+                  <td style={styles.tableCell}>{item.namaDosen}</td>
+                  <td style={styles.tableCell}>{item.waktu}</td>
+                  <td style={styles.tableCell}>{item.durasi}</td>
+                  <td style={styles.tableCell}>{item.jenis}</td>
+                  <td style={styles.tableCell}>
+                    <div style={{
+                      ...styles.status,
+                      ...(item.status === 'Sedang Diperiksa' ? styles.yellowStatus : 
+                          item.status === 'Disetujui' ? styles.greenStatus : 
+                          styles.redStatus)
+                    }}>
+                      {item.status === 'Sedang Diperiksa' && <FaExclamationTriangle style={styles.statusIcon} />}
+                      {item.status === 'Disetujui' && <FaCheck style={styles.statusIcon} />}
+                      {item.status}
+                    </div>
+                  </td>
+                  <td style={{...styles.tableCell, ...styles.aksi}}>
+                    <div style={styles.actionButtonsContainer}>
+                      <button 
+                        style={{...styles.btn, ...styles.orangeBtn, ...styles.leftButton}} 
+                        onClick={() => setShowEditTimelinePopup(true)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button 
+                        style={{...styles.btn, ...styles.blueBtn}} 
+                        onClick={() => setShowPopup(true)}
+                      >
+                        <FaEye />
+                      </button>
+                      <button 
+                        style={{...styles.btn, ...styles.redBtn, ...styles.rightButton}} 
+                        onClick={() => handleHapusPengajuan(item.id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-        {/* Tabel Persetujuan Bukti Milestone */}
-        <div style={styles.tabelContainer}>
-          <h3 style={{...styles.tabelTitle, marginBottom: '20px'}}>Persetujuan Bukti Milestone</h3>
-          <table style={styles.tabelMahasiswa}>
-            <thead>
-              <tr style={{ ...styles.tableHeader, backgroundColor: '#FFFFFF' }}>
-                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '50px'}}>No</th>
-                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '150px'}}>Nama Mahasiswa</th>
-                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '180px'}}>Tahap Milestone</th>
-                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '120px'}}>Bukti</th>
-                <th style={{...styles.centerCell, ...styles.tableHeaderCell, width: '200px'}}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Baris 1 */}
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.centerCell}>1</td>
-                <td style={styles.centerCell}>Muhammad Agal Lulanika</td>
-                <td style={styles.centerCell}>Sidang Komisi 1</td>
-                <td style={styles.centerCell}>
-                  <button 
-                    style={styles.downloadLinkButton}
-                    onClick={() => console.log('Download clicked')}
-                  >
-                    Download Bukti
-                  </button>
-                </td>
-                <td style={styles.centerCell}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px'
-                      }}
-                      onClick={() => setShowConfirmation(true)}
-                      type="button"
-                      aria-label="Accept"
-                    >
-                      <FaArrowRight style={{ color: 'white' }} />
-                    </button>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px'
-                      }}
-                      onClick={() => setShowRejectPopup(true)}
-                      type="button"
-                      aria-label="Decline"
-                    >
-                      <FaTimes style={{ color: 'white' }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              
-              {/* Baris 2 */}
-              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
-                <td style={styles.centerCell}>2</td>
-                <td style={styles.centerCell}>Shafaya Sasikirana</td>
-                <td style={styles.centerCell}>Evaluasi dan Monitoring</td>
-                <td style={styles.centerCell}>
-                  <button 
-                    style={styles.downloadLinkButton}
-                    onClick={() => console.log('Download clicked')}
-                  >
-                    Download Bukti
-                  </button>
-                </td>
-                <td style={styles.centerCell}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px'
-                      }}
-                      onClick={() => setShowConfirmation(true)}
-                      type="button"
-                      aria-label="Accept"
-                    >
-                      <FaArrowRight style={{ color: 'white' }} />
-                    </button>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px'
-                      }}
-                      onClick={() => setShowRejectPopup(true)}
-                      type="button"
-                      aria-label="Decline"
-                    >
-                      <FaTimes style={{ color: 'white' }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              
-              {/* Baris 3 */}
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.centerCell}>3</td>
-                <td style={styles.centerCell}>Rio Alvein Hasana</td>
-                <td style={styles.centerCell}>Sidang Komisi 2</td>
-                <td style={styles.centerCell}>
-                  <button 
-                    style={styles.downloadLinkButton}
-                    onClick={() => console.log('Download clicked')}
-                  >
-                    Download Bukti
-                  </button>
-                </td>
-                <td style={styles.centerCell}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px'
-                      }}
-                      onClick={() => setShowConfirmation(true)}
-                      type="button"
-                      aria-label="Accept"
-                    >
-                      <FaArrowRight style={{ color: 'white' }} />
-                    </button>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px'
-                      }}
-                      onClick={() => setShowRejectPopup(true)}
-                      type="button"
-                      aria-label="Decline"
-                    >
-                      <FaTimes style={{ color: 'white' }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              
-              {/* Baris 4 */}
-              <tr style={{ ...styles.tableRow, backgroundColor: '#FFFFFF' }}>
-                <td style={styles.centerCell}>4</td>
-                <td style={styles.centerCell}>Fadhil Mumtaz</td>
-                <td style={styles.centerCell}>Seminar</td>
-                <td style={styles.centerCell}>
-                  <button 
-                    style={styles.downloadLinkButton}
-                    onClick={() => console.log('Download clicked')}
-                  >
-                    Download Bukti
-                  </button>
-                </td>
-                <td style={styles.centerCell}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px'
-                      }}
-                      onClick={() => setShowConfirmation(true)}
-                      type="button"
-                      aria-label="Accept"
-                    >
-                      <FaArrowRight style={{ color: 'white' }} />
-                    </button>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px'
-                      }}
-                      onClick={() => setShowRejectPopup(true)}
-                      type="button"
-                      aria-label="Decline"
-                    >
-                      <FaTimes style={{ color: 'white' }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              
-              {/* Baris 5 */}
-              <tr style={{ ...styles.tableRow, backgroundColor: '#F2F2F2' }}>
-                <td style={styles.centerCell}>5</td>
-                <td style={styles.centerCell}>T. Mochamad Rafly</td>
-                <td style={styles.centerCell}>Proposal</td>
-                <td style={styles.centerCell}>
-                  <button 
-                    style={styles.downloadLinkButton}
-                    onClick={() => console.log('Download clicked')}
-                  >
-                    Download Bukti
-                  </button>
-                </td>
-                <td style={styles.centerCell}>
-                  <div style={styles.actionButtonsContainer}>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.greenBtn,
-                        borderTopLeftRadius: '6px',
-                        borderBottomLeftRadius: '6px'
-                      }}
-                      onClick={() => setShowConfirmation(true)}
-                      type="button"
-                      aria-label="Accept"
-                    >
-                      <FaArrowRight style={{ color: 'white' }} />
-                    </button>
-                    <button
-                      style={{
-                        ...styles.btn,
-                        ...styles.redBtn,
-                        borderTopRightRadius: '6px',
-                        borderBottomRightRadius: '6px'
-                      }}
-                      onClick={() => setShowRejectPopup(true)}
-                      type="button"
-                      aria-label="Decline"
-                    >
-                      <FaTimes style={{ color: 'white' }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+        {/* Pagination controls */}
+        <div style={styles.paginationContainer}>
+          <div style={styles.paginationInfo}>
+            Menampilkan {indexOfFirstEntry + 1} sampai {Math.min(indexOfLastEntry, pengajuanData.length)} dari {pengajuanData.length} entri
+          </div>
+          
+          <div style={styles.paginationButtons}>
+            <button 
+              style={styles.paginationButton}
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Sebelumnya
+            </button>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                style={{
+                  ...styles.paginationButton,
+                  ...(page === currentPage ? styles.activePaginationButton : {})
+                }}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            
+            <button 
+              style={styles.paginationButton}
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Selanjutnya
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1174,9 +1039,10 @@ const styles = {
     gap: '4px',
     width: '100%',
   },
-    contentWrapper: {
+  contentWrapper: {
     marginLeft: '92.7px',
     padding: '92.7px 20px 20px 20px',
+    maxWidth: 'calc(100% - 92.7px)',
   },
   headerContainer: {
     display: 'flex',
@@ -1262,11 +1128,10 @@ const styles = {
     margin: '0',
   },
   filterContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: '8px',
-  },
+    position: 'relative',
+    display: 'inline-block',
+    width: '150px',
+    },
   filterText: {
     fontSize: '12px',
     color: '#666',
@@ -1312,12 +1177,21 @@ const styles = {
     fontWeight: 'bold',
   },
   tabelContainer: {
-    marginTop: '30px',
     background: 'white',
     padding: '20px',
     borderRadius: '12px',
     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
     overflowX: 'auto',
+    marginBottom: '10px',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  tableTopControls: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    width: '100%',
   },
   tabelMahasiswa: {
     width: '100%',
@@ -1381,7 +1255,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: '6px',
     overflow: 'hidden',
   },
   btn: {
@@ -1403,8 +1276,8 @@ const styles = {
   cyanBtn: {
     backgroundColor: '#06b6d4',
   },
-  greenBtn: {
-    backgroundColor: '#22c55e',
+  orangeBtn: {
+    backgroundColor: '#FD7E14',
   },
   redBtn: {
     backgroundColor: '#ef4444',
@@ -1780,6 +1653,462 @@ const styles = {
   activeSidebarIcon: {
     color: 'white',
   },
+
+  timelineVerificationContainer: {
+    backgroundColor: '#ffffff',
+    padding: '24px 20px',
+    borderRadius: '12px',
+    marginBottom: '30px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    width: '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
+
+  timelineVerificationHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '24px',
+  },
+  timelineVerificationTitle: {
+    fontSize: '18px',
+    fontWeight: '600',
+    color: '#1f2937',
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  timelineVerificationBadge: {
+    color: 'white',
+    padding: '4px 12px',
+    borderRadius: '16px',
+    fontSize: '12px',
+    fontWeight: '600',
+  },
+  timelineVerificationEditButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    fontSize: '14px',
+    color: '#3b82f6',
+    textDecoration: 'none',
+    backgroundColor: '#F8F9FA',    
+    border: '1px solid #dddddd',   
+    borderRadius: '6px',         
+    padding: '6px 12px',          
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+  },
+  timelineVerificationBody: {
+    marginBottom: '24px',
+  },
+  timelineStepsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0',
+    marginBottom: '16px',
+    overflowX: 'auto',
+    paddingBottom: '10px', 
+    minHeight: '50px', 
+    width: '100%',
+  },
+  timelineLabelsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    overflowX: 'auto',
+    paddingBottom: '10px',
+    width: '100%',
+  },
+  timelineControls: {
+    display: 'flex',
+    gap: '12px',
+    padding: '16px',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    border: '1px solid #e5e7eb',
+  },
+  timelineControlLabel: {
+    fontSize: '14px',
+    color: '#6b7280',
+    marginRight: '12px',
+  },
+  timelineControlButton: {
+    padding: '8px 16px',
+    borderRadius: '6px',
+    border: '1px solid #d1d5db',
+    backgroundColor: 'white',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'all 0.2s',
+  },
+  timelineControlButtonActive: {
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    border: '1px solid #3b82f6',
+  },
+  filterDropdownHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '6px 12px',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #dddddd',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: '#333333',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+  },
+  filterIcon: {
+    fontSize: '12px',
+    color: '#666666',
+  },
+  filterDropdownList: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #dddddd',
+    borderRadius: '6px',
+    marginTop: '4px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    zIndex: 1000,
+    padding: '4px 0',
+  },
+  filterOptionItem: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '8px 12px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: '#333333',
+    '&:hover': {
+      backgroundColor: '#f0f0f0',
+    },
+  },
+  filterOptionItemHover: {
+    backgroundColor: '#f0f0f0',
+  },
+  filterRadioInput: {
+    marginRight: '8px',
+  },
+  filterOptionText: {
+    flex: 1,
+  },
+
+  // Container relatif untuk garis + lingkaran
+  timelineContainer: {
+    position: 'relative',
+    width: '100%',
+    padding: '0 20px',
+    boxSizing: 'border-box',
+    marginBottom: '20px',
+  },
+
+  timelineStepsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+
+  timelineStepItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  timelineStepCircle: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '14px',
+    fontWeight: '600',
+  },
+  timelineStepLine: {
+    flex: 1,
+    height: '4px',
+    marginTop: '18px',
+    marginLeft: '-20px',  // Perubahan penting
+    marginRight: '-20px', // Perubahan penting
+    position: 'relative',
+    zIndex: 1
+  },
+  timelineStepLabel: {
+    marginTop: '6px',
+    fontSize: '11px',
+    color: '#6b7280',
+    textAlign: 'center',
+    maxWidth: '70px',
+    lineHeight: '1.2',
+  },
+
+  // New styles for added components
+  addButtonContainer: {
+    marginBottom: '20px',
+  },
+  addButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F8F9FA',
+    border: '1px solid #DDDDDD',
+    borderRadius: '6px',
+    padding: '6px 12px',
+    cursor: 'pointer',
+    fontFamily: "'Poppins', sans-serif",
+    transition: 'background-color 0.2s',
+    '&:hover': {
+      backgroundColor: '#f0f0f0',
+    },
+  },
+  addButtonIcon: {
+    color: '#007BFF',
+    marginRight: '8px',
+    fontSize: '14px',
+  },
+  addButtonText: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#007BFF',
+  },
+  
+  tableHeaderContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    flexWrap: 'wrap',
+    gap: '10px',
+  },
+  
+  entriesControl: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  entriesLabel: {
+    fontSize: '14px',
+    color: '#666',
+  },
+  entriesInput: {
+    width: '60px',
+    padding: '6px 10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '14px',
+    textAlign: 'center',
+  },
+  
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    marginTop: '10px',
+    padding: '15px 20px',
+  },
+  paginationInfo: {
+    fontSize: '14px',
+    color: '#666',
+  },
+  paginationButtons: {
+    display: 'flex',
+    gap: '6px',
+  },
+  paginationButton: {
+    padding: '6px 12px',
+    border: '1px solid #ddd',
+    backgroundColor: 'white',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    minWidth: '36px',
+    textAlign: 'center',
+    transition: 'background-color 0.2s',
+    '&:hover:not(:disabled)': {
+      backgroundColor: '#f0f0f0',
+    },
+    '&:disabled': {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+  },
+  activePaginationButton: {
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    borderColor: '#3b82f6',
+  },
+    leftButton: {
+    borderTopLeftRadius: '4px',
+    borderBottomLeftRadius: '4px',
+  },
+  rightButton: {
+    borderTopRightRadius: '4px',
+    borderBottomRightRadius: '4px',
+  },
+
+editTimelinePopupContainer: {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 2000,
+},
+editTimelinePopupContent: {
+  backgroundColor: 'white',
+  borderRadius: '12px',
+  padding: '30px',
+  width: '450px',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  position: 'relative',
+},
+editTimelineCloseButton: {
+  position: 'absolute',
+  top: '15px',
+  right: '15px',
+  background: 'none',
+  border: 'none',
+  fontSize: '18px',
+  cursor: 'pointer',
+  color: '#666',
+},
+editTimelineTitle: {
+  marginTop: '0',
+  marginBottom: '20px',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  color: '#333',
+},
+editTimelineInputGroup: {
+  marginBottom: '20px',
+},
+editTimelineLabel: {
+  display: 'block',
+  marginBottom: '8px',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: '#555',
+},
+editTimelineSelect: {
+  width: '100%',
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  fontSize: '14px',
+},
+editTimelineDateInputContainer: {
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative',
+},
+editTimelineInput: {
+  flex: 1,
+  padding: '10px',
+  border: '1px solid #ddd',
+  borderRight: 'none',
+  borderTopLeftRadius: '6px',
+  borderBottomLeftRadius: '6px',
+  fontSize: '14px',
+},
+editTimelineCalendarButton: {
+  padding: '10px 12px',
+  background: '#f0f0f0',
+  border: '1px solid #ddd',
+  borderLeft: 'none',
+  borderTopRightRadius: '6px',
+  borderBottomRightRadius: '6px',
+  cursor: 'pointer',
+  fontSize: '16px',
+},
+editTimelineButtonGroup: {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  gap: '10px',
+  marginTop: '20px',
+},
+editTimelineButton: {
+  padding: '10px 20px',
+  borderRadius: '6px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: '500',
+},
+editTimelineSaveButton: {
+  backgroundColor: '#4CAF50',
+  color: 'white',
+},
+editTimelineCancelButton: {
+  backgroundColor: '#f44336',
+  color: 'white',
+},
+calendarContainer: {
+  position: 'absolute',
+  top: '100%',
+  left: 0,
+  width: '100%',
+  backgroundColor: 'white',
+  border: '1px solid #ddd',
+  borderRadius: '6px',
+  padding: '10px',
+  marginTop: '5px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  zIndex: 10,
+},
+calendarHeader: {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '10px',
+},
+calendarNavButton: {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+},
+calendarMonth: {
+  fontWeight: 'bold',
+},
+calendarWeekdays: {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(7, 1fr)',
+  textAlign: 'center',
+  fontWeight: 'bold',
+  marginBottom: '5px',
+},
+calendarDays: {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(7, 1fr)',
+  gap: '5px',
+},
+calendarDay: {
+  padding: '5px',
+  textAlign: 'center',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  '&:hover': {
+    backgroundColor: '#f0f0f0',
+  },
+},
+calendarSelectedDay: {
+  backgroundColor: '#3b82f6',
+  color: 'white',
+},
 
 };
 
